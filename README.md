@@ -6,7 +6,7 @@ This repository contains the official _TensorFlow_ implementation of the followi
 >
 > by Kārlis Freivalds, Emīls Ozoliņš, Agris Šostaks
 >
-> [[arXiv]()] [[BibTeX]()]
+> [[arXiv](https://arxiv.org/abs/1907.07897)] [[BibTeX](#citing-shuffle-exchange-neural-networks)]
 >
 >Abstract: _A key requirement in sequence to sequence processing is the modeling of long range dependencies. To this end, a vast majority of the state-of-the-art models use attention mechanism which is of O(n²) complexity that leads to slow execution for long sequences._
 >
@@ -138,6 +138,19 @@ embedding_file = base_folder + "fast_word_embedding.vec"
 emb_vector_file = base_folder + "emb_vectors.bin"
 emb_word_dictionary = base_folder + "word_dict.bin"
 ...
+```
+
+## Citing _Shuffle-Exchange neural networks_
+
+If you use _Shuffle-Exchange neural networks_, please use the following _BibTeX_ entry:
+```
+@article{
+  Freivalds2019ShuffleExchange,
+  title={Neural Shuffle-Exchange Networks - Sequence Processing in O(n log n) Time},
+  author={Freivalds, Kārlis and Ozoliņš, Emīls and Šostaks, Agris},
+  journal={arXiv preprint arXiv:1907.07897},
+  year={2019}
+}
 ```
 
 ## Contact information
