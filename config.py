@@ -13,7 +13,7 @@ tf_config.graph_options.optimizer_options.global_jit_level = tf.OptimizerOptions
 """
     Model configuration
 """
-dropout_keep_prob = 1.0
+dropout_keep_prob = 0.9
 input_dropout_keep_prob = 1.0
 input_word_dropout_keep_prob = 1.0
 label_smoothing = 0.0
@@ -43,7 +43,7 @@ log_filename = ""
 """
 training_iters = 20001
 display_step = 100
-batch_size = 32
+batch_size = 64
 data_size = 10000
 bins = [8, 16, 32, 64]
 n_Benes_blocks = 2
@@ -86,21 +86,22 @@ language_tasks = {"lambada"}
 task = "badd"
 n_input = 13  # range of input digits
 n_output = 4  # range of output digits
-n_hidden = 48 * 2  # number of maps
+n_hidden = 48 * 4  # number of maps
 n_Benes_blocks = 1
 
 # suggested settings for sequence reversal
 # task = "rev"
 # n_input = 12  # range of input digits
 # n_output = 12  # range of output digits
-# n_hidden = 48 * 2  # number of maps
+# n_hidden = 48 * 4  # number of maps
 # n_Benes_blocks = 1
+# dropout_keep_prob = 1.0
 
 # suggested settings for sequence duplication
 # task = "dup"
 # n_input = 12  # range of input digits
 # n_output = 12  # range of output digits
-# n_hidden = 48 * 2  # number of maps
+# n_hidden = 48 * 4  # number of maps
 # n_Benes_blocks = 1
 
 # suggested settings for binary multiplication
@@ -114,11 +115,11 @@ n_Benes_blocks = 1
 # task = "sort"
 # n_input = 12
 # n_output = 12
-# n_hidden = 48*2 # number of maps
+# n_hidden = 48*4 # number of maps
 # n_Benes_blocks = 1
 
-initial_learning_rate = 0.0025 * np.sqrt(96 / n_hidden)
-min_learning_rate = initial_learning_rate / 40
+initial_learning_rate = 0.00125 * np.sqrt(96 / n_hidden)
+min_learning_rate = initial_learning_rate
 
 
 # suggested settings for LAMBADA question answering

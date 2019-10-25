@@ -25,6 +25,7 @@ from tensorflow.python.ops import variable_scope as vs
 
 import shuffle_exchange_network as network
 import config as cnf
+from RAdam import RAdamOptimizer
 
 
 class ModelSpecific:
@@ -193,18 +194,14 @@ class ShuffleExchangeModel:
         return cost, accuracy, allMem_tensor, prediction, per_item_cost, result
 
     def embedding(self, indices, length):
-        with tf.device('/cpu:0'):
-            emb_weights = tf.get_variable("embedding", [self.n_input, self.num_units],
-                                          initializer=tf.random_uniform_initializer(-0.01, 0.01))
-
-            cur = tf.gather(emb_weights, indices)
+        emb_weights = tf.get_variable("embedding", [self.n_input, self.num_units],
+                                      initializer=tf.random_uniform_initializer(-0.01, 0.01))
+        cur = tf.nn.embedding_lookup(emb_weights, indices)
         return network.activation_fn(30 * cur)
 
     def pre_trained_embedding(self, indices, length):
-        with tf.device('/cpu:0'):
-            emb_weights = tf.get_variable("embedding", self.embedding_shape, tf.float32, initializer=self.embedding_initializer, trainable=False)
-            cur = tf.nn.embedding_lookup(emb_weights, indices)
-
+        emb_weights = tf.get_variable("embedding", self.embedding_shape, tf.float32, initializer=self.embedding_initializer, trainable=False)
+        cur = tf.nn.embedding_lookup(emb_weights, indices)
         cur = network.conv_linear(cur, 1, self.embedding_shape[1], self.num_units, 0.0, "embedding_linear", False)
         return network.activation_fn(cur)
 
@@ -271,10 +268,11 @@ class ShuffleExchangeModel:
         reset_img = reset_img[:, 0:1, :, :]
         reset_img = tf.cast(reset_img * 255, dtype=tf.uint8)
         tf.summary.image("reset", tf.transpose(reset_img, [3, 0, 2, 1]), max_outputs=16)
-        prev_img = tf.stack(network.prev_mem_list)
-        prev_img = prev_img[:, 0:1, :, :]
-        prev_img = tf.cast(prev_img * 255, dtype=tf.uint8)
-        tf.summary.image("prev_mem", tf.transpose(prev_img, [3, 0, 2, 1]), max_outputs=16)
+        if network.prev_mem_list:
+            prev_img = tf.stack(network.prev_mem_list)
+            prev_img = prev_img[:, 0:1, :, :]
+            prev_img = tf.cast(prev_img * 255, dtype=tf.uint8)
+            tf.summary.image("prev_mem", tf.transpose(prev_img, [3, 0, 2, 1]), max_outputs=16)
 
         candidate_img = tf.stack(network.candidate_mem)
         candidate_img = candidate_img[:, 0:1, :, :]
@@ -289,18 +287,13 @@ class ShuffleExchangeModel:
             name = var.name.replace("var_lengths", "")
             tf.summary.histogram(name + '/histogram', var)
 
-        # gradients and optimizer
-        grads = tf.gradients(self.cost, tvars, colocate_gradients_with_ops=True)
-
         # we use a small L2 regularization, although it is questionable if it helps
         regularizable_vars = [var for var in tvars if "CvK" in var.name]
         reg_costlist = [tf.reduce_sum(tf.square(var)) for var in regularizable_vars]
         reg_cost = tf.add_n(reg_costlist)
         tf.summary.scalar("base/regularize_loss", reg_cost)
-
-        LazyAdamW = tf.contrib.opt.extend_with_decoupled_weight_decay(tf.contrib.opt.LazyAdamOptimizer)
-        optimizer = LazyAdamW(weight_decay = tf.cast(0.001*self.learning_rate, tf.float32), learning_rate = self.learning_rate, beta1=0.9, beta2=0.999, epsilon=1e-5)
-        self.optimizer = optimizer.apply_gradients(zip(grads, tvars), global_step=self.global_step, decay_var_list=regularizable_vars)
+        optimizer = RAdamOptimizer(self.learning_rate, epsilon=1e-5, L2_decay=0.01, decay_vars=regularizable_vars, total_steps=cnf.training_iters, warmup_proportion=0.0) #Adam optimizer works as well
+        self.optimizer = optimizer.minimize(self.cost, global_step=self.global_step)
 
         # some values for printout
         max_vals = []

@@ -101,7 +101,7 @@ def shuffle_layer(mem, do_ror=True):
     return mem_shuffled
 
 
-def switch_layer(mem_shuffled, kernel_width, prefix, residual_input=None, do_xor=True):
+def switch_layer(mem_shuffled, kernel_width, prefix, residual_input=None, perform_swap=True):
     """Computation unit for every two adjacent elements"""
     length = mem_shuffled.get_shape().as_list()[1]
     num_units = mem_shuffled.get_shape().as_list()[2]
@@ -127,10 +127,12 @@ def switch_layer(mem_shuffled, kernel_width, prefix, residual_input=None, do_xor
         return activation_fn(res), tf.reshape(reset1, [batch_size, length, in_units])
 
     mem_shuffled_x = mem_shuffled
-    if do_xor:
+    if perform_swap:
         xor_indices = [x ^ 1 for x in range(length)]
-        mem_xor = tf.gather(mem_shuffled[:, :, num_units // 2:], xor_indices, axis=1)
-        mem_shuffled_x = tf.concat([mem_shuffled[:, :, :num_units // 2], mem_xor], axis=2)
+        #mem_xor = tf.gather(mem_shuffled[:, :, num_units // 2:], xor_indices, axis=1)
+        #mem_shuffled_x = tf.concat([mem_shuffled[:, :, :num_units // 2], mem_xor], axis=2)
+        mem_xor = tf.gather(mem_shuffled[:, :, :num_units // 2], xor_indices, axis=1)
+        mem_shuffled_x = tf.concat([mem_xor, mem_shuffled[:, :, num_units // 2:]], axis=2)
 
     if residual_input is None:
         mem_all = mem_shuffled
@@ -152,55 +154,87 @@ def switch_layer(mem_shuffled, kernel_width, prefix, residual_input=None, do_xor
 
     return candidate
 
-
 def shuffle_exchange_network(cur, name, kernel_width=1, n_blocks=1, tied_inner_weights=True, tied_outer_weights=False):
+    """Neural Benes Network with skip connections between blocks."""
+    length = cur.get_shape().as_list()[1]
+    num_units = cur.get_shape().as_list()[2]
+    n_bits = (length - 1).bit_length()
+    allMem = []
+
+    with tf.variable_scope(name + "_shuffle_exchange", reuse=tf.AUTO_REUSE):
+        stack = []
+        for k in range(n_blocks):
+            outstack = []
+            for i in range(n_bits - 1):
+                outstack.append(cur)
+                layer_name = "forward"
+                prev = stack[i] if len(stack) > 0 else None
+                if not tied_outer_weights: layer_name = str(k) + "_" + layer_name
+                if not tied_inner_weights: layer_name += "_" + str(i)
+                cur = switch_layer(cur, kernel_width, layer_name, residual_input=prev)
+                allMem.append(cur)
+                cur = shuffle_layer(cur, do_ror=False)
+
+            for i in range(n_bits - 1):
+                outstack.append(cur)
+                layer_name = "reverse"
+                prev = stack[i + n_bits - 1] if len(stack) > 0 else None
+                if not tied_outer_weights: layer_name = str(k) + "_" + layer_name
+                if not tied_inner_weights: layer_name += "_" + str(n_bits - 1 -1 - i)
+                cur = switch_layer(cur, kernel_width, layer_name, residual_input=prev)
+                allMem.append(cur)
+                cur = shuffle_layer(cur, do_ror=True)
+            stack = outstack
+
+        layer_name = "last"
+        prev = stack[0] if len(stack) > 0 and n_blocks>=2 else None
+        cur = switch_layer(cur, kernel_width, layer_name, residual_input=prev)
+        allMem.append(cur)
+
+    return cur, allMem
+
+def shuffle_exchange_network_less_sharing(cur, name, kernel_width=1, n_blocks=1, tied_inner_weights=True, tied_outer_weights=False):
     """Neural Benes Network with residual connections between blocks."""
     length = cur.get_shape().as_list()[1]
     n_bits = (length - 1).bit_length()
     allMem = []
 
     with tf.variable_scope(name + "/shuffle_exchange", reuse=tf.AUTO_REUSE):
-        middle_layer = None
-        cur = switch_layer(cur, kernel_width, "first_switch")
-        first_layer = cur
-        allMem.append(cur)
-
+        outstack = []
         stack = []
-        for k in range(n_blocks):
-            outstack = []
-            for i in range(n_bits - 2):
-                layer_name = "forward_switch"
-                cur = shuffle_layer(cur, do_ror=False)
-                prev = stack[i] if len(stack) > 0 else None
-                if not tied_outer_weights or prev is None: layer_name = str(k) + "_" + layer_name
-                if not tied_inner_weights: layer_name += "_" + str(i)
-                cur = switch_layer(cur, kernel_width, layer_name, residual_input=prev)
-                allMem.append(cur)
-                outstack.append(cur)
 
-            cur = shuffle_layer(cur, do_ror=False)
-            layer_name = "middle_switch"
-            if not tied_outer_weights or middle_layer is None: layer_name = str(k) + "_" + layer_name
-            cur = switch_layer(cur, kernel_width, layer_name, residual_input=middle_layer, do_xor=False)
-            middle_layer = cur
+        def switch_and_shuffle(cur, do_ror, layer_name, block_index, layer_index, perform_swap=True):
+            prev = stack[layer_index] if len(stack) > 0 else None
+            if not tied_outer_weights or prev is None: layer_name = str(block_index) + "_" + layer_name
+            if not tied_inner_weights: layer_name += "_" + str(layer_index)
+            cur = switch_layer(cur, kernel_width, layer_name, residual_input=prev, perform_swap=perform_swap)
+            cur = shuffle_layer(cur, do_ror=do_ror)
+            outstack.append(cur)
             allMem.append(cur)
+            return cur
+
+        for k in range(n_blocks):
+            layer_ind = 0
+            outstack = []
+            outstack.append(cur)
+            cur = switch_and_shuffle(cur, False, "first_layer", k, layer_ind, perform_swap=False)
+            layer_ind+=1
 
             for i in range(n_bits - 2):
-                layer_name = "backward_switch"
-                cur = shuffle_layer(cur, do_ror=True)
-                prev = stack[i + n_bits - 2] if len(stack) > 0 else None
-                if not tied_outer_weights or prev is None: layer_name = str(k) + "_" + layer_name
-                if not tied_inner_weights: layer_name += "_" + str(n_bits - 2 - 1 - i)
-                cur = switch_layer(cur, kernel_width, layer_name, residual_input=prev)
-                allMem.append(cur)
-                outstack.append(cur)
+                cur = switch_and_shuffle(cur, False, "forward", k, layer_ind)
+                layer_ind+=1
+
+            cur = switch_and_shuffle(cur, True, "middle_layer", k, layer_ind, perform_swap=False)
+            layer_ind += 1
+
+            for i in range(n_bits - 2):
+                cur = switch_and_shuffle(cur, True, "backward", k, layer_ind)
+                layer_ind+=1
+
             stack = outstack
 
-            cur = shuffle_layer(cur, do_ror=True)
-            layer_name = "last_switch"
-            if not tied_outer_weights: layer_name = str(k) + "_" + layer_name
-            cur = switch_layer(cur, kernel_width, layer_name, residual_input=first_layer)
-            first_layer = cur
-            allMem.append(cur)
+        prev = stack[0] if n_blocks >= 2 else None
+        cur = switch_layer(cur, kernel_width, "last_layer", residual_input=prev, perform_swap=False)
+        allMem.append(cur)
 
     return cur, allMem

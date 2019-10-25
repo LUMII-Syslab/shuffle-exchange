@@ -232,8 +232,8 @@ def add_padding(inp: list, target: list, max_length: int, do_train: bool):
             pad_len_before = min(pad_len_input, pad_len_output) // 2
     pad_before = [0] * pad_len_before
 
-    padded_input = pad_before + inp + [0 for _ in range(pad_len_input - pad_len_before)]
-    padded_target = pad_before + target + [0 for _ in range(pad_len_output - pad_len_before)]
+    padded_input = pad_before + inp + [0]*(pad_len_input - pad_len_before)
+    padded_target = pad_before + target + [0]*(pad_len_output - pad_len_before)
 
     return padded_input, padded_target
 
@@ -241,12 +241,13 @@ def add_padding(inp: list, target: list, max_length: int, do_train: bool):
 def disperse_padding(inp, max_length, target):
     assert len(inp) == len(target)
     desired_length = np.random.randint(len(inp), max_length + 1)
+    rand_floats = np.random.random(size=desired_length)
     cur_symbol = 0
     res_in = []
     res_out = []
     for i in range(desired_length):
         remaining_symbols = len(inp) - cur_symbol
-        if np.random.randint(desired_length - i) >= remaining_symbols:
+        if rand_floats[i]*(desired_length - i) >= remaining_symbols:
             res_in.append(0)
             res_out.append(0)
         else:

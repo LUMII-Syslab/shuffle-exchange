@@ -19,6 +19,7 @@
 # SOFTWARE.
 
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '20'
 import time
 from datetime import datetime
 
@@ -32,10 +33,9 @@ from shuffle_exchange_model import ShuffleExchangeModel
 
 print("Running Shuffle-Exchange trainer.....")
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-
 if not cnf.use_two_gpus:
     os.environ["CUDA_VISIBLE_DEVICES"] = cnf.gpu_instance
+os.environ["TF_ENABLE_AUTO_MIXED_PRECISION"] = "1"
 
 countList = [cnf.batch_size for x in cnf.bins]
 np.set_printoptions(linewidth=2000, precision=4, suppress=True)
@@ -82,6 +82,13 @@ with tf.Graph().as_default():
         if cnf.load_prev:
             saver1 = tf.train.Saver([var for var in tf.trainable_variables()])
             saver1.restore(sess, cnf.model_file)
+
+        tvars = tf.trainable_variables()
+        learnable_count = 0
+        for v in tvars:
+            learnable_count += np.product(v.get_shape().as_list())
+        print("learnable parameters:", learnable_count / 1024 / 1024, 'M')
+
 
         batch_xs, batch_ys = data_supplier.supply_validation_data(max_length, cnf.batch_size)
         step = 1
