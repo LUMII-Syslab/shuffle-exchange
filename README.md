@@ -35,7 +35,7 @@ Here are the accuracy results on the _[LAMBADA](https://www.aclweb.org/anthology
 Note: Our used model is 7 times smaller and can process 32 times longer sequences using the same amount of GPU memory compared to the _Universal Transformer_ model.
 
 - Our model with depth of 2log*n* can learn sorting and long binary addition algorithms that generalize to longer inputs. Here are the accuracy results on the chosen sequential algorithmic tasks – generalization to sequences of length 512 where the model is trained on length 64:
-**![](readme-shuffle_exchange_algorithmic_accuracy.png)**
+**![](assets/readme-shuffle_exchange_algorithmic_accuracy.png)**
 - The algorithms that are learned by our model can process 128 times longer sequences and faster than the  _[DNGPU model](https://arxiv.org/pdf/1702.08727)_ (optimized Neural GPU with diagonal gates).
 - On long binary multiplication task, our model achieves 98% test accuracy on sequences of length 128. Training multiplication on longer sequences is possible but requires increasing the width or depth of the model.
   - Note: The fastest practical FFT-based algorithms are O(*n* log *n* loglog *n*) therefore it is expected that the solution does not generalize to inputs longer than the model is trained on.
@@ -45,13 +45,13 @@ Note: Our used model is 7 times smaller and can process 32 times longer sequence
 _Shuffle-Exchange neural networks_ are continuous, differentiable neural networks with a regular-layered structure consisting of alternating _Switch_ and _Shuffle_ layers.
 
 Here is an illustration of a _Shuffle-Exchange network_ (left) and its _Beneš network_ (right):
-**![](readme-shuffle_exchange_architectures.png)**
+**![](assets/readme-shuffle_exchange_architectures.png)**
 
 First comes the exchange stage where elements are divided into adjacent pairs and each pair is passed through a switch. The switch applies a learnable 2-to-2 function to each pair of values. As a special case, it may select which input is routed to which output. The shuffle stage follows (depicted as arrows in the figures), where messages are permuted according to the perfect-shuffle permutation. In this permutation, the destination address is a cyclic bit shift (left or right) of the source address.
 
 Here is an illustration of a _Switch Unit_ which acts on a pair of inputs and produces two outputs. It is similar to _[Gated Recurrent Unit (GRU)](https://en.wikipedia.org/wiki/Gated_recurrent_unit)_:
 
-**![](readme-shuffle_exchange_switch_unit.png)**
+**![](assets/readme-shuffle_exchange_switch_unit.png)**
 
 The whole network is organized by connecting these two kinds of layers in the pattern of the _Beneš network_. Such a network can represent a wide class of functions including any permutation of the input values.
 
