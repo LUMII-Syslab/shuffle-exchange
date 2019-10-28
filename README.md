@@ -56,7 +56,7 @@ The _Shuffle-Exchange neural network_ is organized in blocks by alternating thes
  
 Here is an illustration of a whole _Shuffle-Exchange neural network_ model consisting of two blocks on input of length 16:
 
-**![](assets/readme-shuffle_exchange_model_architecture.png)**
+**![](assets/readme-shuffle_exchange_model.png)**
 
 
 ## System requirements
