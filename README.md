@@ -44,16 +44,20 @@ Note: Our used model is 7 times smaller and can process 32 times longer sequence
 
 _Shuffle-Exchange neural networks_ are continuous, differentiable neural networks with a regular-layered structure consisting of alternating _Switch_ and _Shuffle_ layers.
 
-Here is an illustration of a _Shuffle-Exchange network_ (left) and its _Beneš network_ (right):
-**![](assets/readme-shuffle_exchange_architectures.png)**
+The _Switch Layer_ divides the input into adjacent pairs of values and applies the _Switch Unit_, a learnable 2-to-2 function, to each pair of inputs producing two outputs.
 
-First comes the exchange stage where elements are divided into adjacent pairs and each pair is passed through a switch. The switch applies a learnable 2-to-2 function to each pair of values. As a special case, it may select which input is routed to which output. The shuffle stage follows (depicted as arrows in the figures), where messages are permuted according to the perfect-shuffle permutation. In this permutation, the destination address is a cyclic bit shift (left or right) of the source address.
-
-Here is an illustration of a _Switch Unit_ which acts on a pair of inputs and produces two outputs. It is similar to _[Gated Recurrent Unit (GRU)](https://en.wikipedia.org/wiki/Gated_recurrent_unit)_:
+Here is an illustration of a _Switch Unit_, it is similar to the _[Gated Recurrent Unit (GRU)](https://en.wikipedia.org/wiki/Gated_recurrent_unit)_:
 
 **![](assets/readme-shuffle_exchange_switch_operations.png)**
 
-The whole network is organized by connecting these two kinds of layers in the pattern of the _Beneš network_. Such a network can represent a wide class of functions including any permutation of the input values.
+The _Shuffle Layer_ follows (depicted as stylized arrows in the figure below), where inputs are permuted according to a cyclic bit shift – rotating left in the first part of the network and rotating right (inversely) in the second part.
+
+The _Shuffle-Exchange neural network_ is organized in blocks by alternating these two kinds of layers in the pattern of the _Beneš network_. Such a network can represent a wide class of functions including any permutation of the input values. 
+ 
+Here is an illustration of a whole _Shuffle-Exchange neural network_ model consisting of two blocks on input of length 16:
+
+**![](assets/readme-shuffle_exchange_model_architecture.png)**
+
 
 ## System requirements
 
