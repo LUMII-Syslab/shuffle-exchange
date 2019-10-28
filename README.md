@@ -2,7 +2,7 @@
 
 This repository contains the official _TensorFlow_ implementation of the following paper:
 
->**Neural Shuffle-Exchange Networks − Sequence Processing in O(*n*log*n*) Time**
+>**Neural Shuffle-Exchange Networks − Sequence Processing in O(*n* log *n*) Time**
 >
 > by Kārlis Freivalds, Emīls Ozoliņš, Agris Šostaks
 >
@@ -10,13 +10,13 @@ This repository contains the official _TensorFlow_ implementation of the followi
 >
 >Abstract: _A key requirement in sequence to sequence processing is the modeling of long range dependencies. To this end, a vast majority of the state-of-the-art models use attention mechanism which is of O(n²) complexity that leads to slow execution for long sequences._
 >
->_We introduce a new Shuffle-Exchange neural network model for sequence to sequence tasks which have O(logn) depth and O(nlogn) total complexity. We show that this model is powerful enough to infer efficient algorithms for common algorithmic benchmarks including sorting, addition and multiplication. We evaluate our architecture on the challenging LAMBADA question answering dataset and compare it with the state-of-the-art models which use attention. Our model achieves competitive accuracy and scales to sequences with more than a hundred thousand of elements._
+>_We introduce a new Shuffle-Exchange neural network model for sequence to sequence tasks which have O(log n) depth and O(n log n) total complexity. We show that this model is powerful enough to infer efficient algorithms for common algorithmic benchmarks including sorting, addition and multiplication. We evaluate our architecture on the challenging LAMBADA question answering dataset and compare it with the state-of-the-art models which use attention. Our model achieves competitive accuracy and scales to sequences with more than a hundred thousand of elements._
 >
 >_We are confident that the proposed model has the potential for building more efficient architectures for processing large interrelated data in language modeling, music generation and other application domains._
 
 # Introduction
 
-_Shuffle-Exchange neural network_ is a new differentiable architecture for sequence processing tasks that has O(log*n*) depth and O(*n*log*n*) total complexity and allows modeling any dependencies in the sequence. It can successfully learn nontrivial O(*n*log*n*) time algorithms with good generalization. The _Shuffle-Exchange_ model can serve as an alternative to the attention mechanism with better scaling to long sequences.
+_Shuffle-Exchange neural network_ is a new differentiable architecture for sequence processing tasks that has O(log*n*) depth and O(*n* log *n*) total complexity and allows modeling any dependencies in the sequence. It can successfully learn nontrivial O(*n* log *n*) time algorithms with good generalization. The _Shuffle-Exchange_ model can serve as an alternative to the attention mechanism with better scaling to long sequences.
 
 # Preview of results
 
@@ -34,11 +34,11 @@ Here are the accuracy results on the _[LAMBADA](https://www.aclweb.org/anthology
 
 Note: Our used model is 7 times smaller and can process 32 times longer sequences using the same amount of GPU memory compared to the _Universal Transformer_ model.
 
-- Our model with depth of 2log*n* can learn sorting and long binary addition algorithms that generalize to longer inputs. Here are the accuracy results on the chosen sequential algorithmic tasks – generalization to sequences of length 512 where the model is trained on length 64:
+- Our model with depth of 2 log *n* can learn sorting and long binary addition algorithms that generalize to longer inputs. Here are the accuracy results on the chosen sequential algorithmic tasks – generalization to sequences of length 512 where the model is trained on length 64:
 **![](assets/readme-shuffle_exchange_task_accuracy.png)**
 - The algorithms that are learned by our model can process 128 times longer sequences and faster than the _[DNGPU model](https://arxiv.org/pdf/1702.08727)_ (optimized Neural GPU with diagonal gates).
 - On long binary multiplication task, our model achieves 98% test accuracy on sequences of length 128. Training multiplication on longer sequences is possible but requires increasing the width or depth of the model.
-  - Note: The fastest practical FFT-based algorithms are O(*n*log*n*loglog*n*) therefore it is expected that the solution does not generalize to inputs longer than the model is trained on.
+  - Note: The fastest practical FFT-based algorithms are O(*n* log *n* loglog *n*) therefore it is expected that the solution does not generalize to inputs longer than the model is trained on.
 
 # What are _Shuffle-Exchange neural networks_?
 
