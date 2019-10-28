@@ -51,7 +51,7 @@ First comes the exchange stage where elements are divided into adjacent pairs an
 
 Here is an illustration of a _Switch Unit_ which acts on a pair of inputs and produces two outputs. It is similar to _[Gated Recurrent Unit (GRU)](https://en.wikipedia.org/wiki/Gated_recurrent_unit)_:
 
-**![](assets/readme-shuffle_exchange_switch_unit.png)**
+**![](assets/readme-shuffle_exchange_switch_operations.png)**
 
 The whole network is organized by connecting these two kinds of layers in the pattern of the _Beneš network_. Such a network can represent a wide class of functions including any permutation of the input values.
 
