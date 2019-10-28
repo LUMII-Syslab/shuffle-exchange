@@ -148,12 +148,11 @@ emb_word_dictionary = base_folder + "word_dict.bin"
 
 If you use _Shuffle-Exchange neural networks_, please use the following _BibTeX_ entry:
 ```
-@article{
-  Freivalds2019ShuffleExchange,
-  title={Neural Shuffle-Exchange Networks - Sequence Processing in O(n log n) Time},
-  author={Freivalds, Kārlis and Ozoliņš, Emīls and Šostaks, Agris},
-  journal={arXiv preprint arXiv:1907.07897},
-  year={2019}
+@incollection{
+  title = {Neural Shuffle-Exchange Networks - Sequence Processing in O(n log n) Time},
+  author = {Freivalds, Kārlis and Ozoliņš, Emīls and Šostaks, Agris},
+  booktitle = {Advances in Neural Information Processing Systems 33},
+  year = {2019}
 }
 ```
 
