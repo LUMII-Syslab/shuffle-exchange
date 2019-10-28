@@ -28,7 +28,7 @@ Here are the accuracy results on the _[LAMBADA](https://www.aclweb.org/anthology
 | ------ | ------ |
 | Random word from passage | 1.6 |
 | _Gated-Attention Reader_ | 49.0 |
-| ***Shuffle-Exchange neural network*** | **52.8** |
+| ***Shuffle-Exchange neural network*** | **52.28** |
 | _Universal Transformer_ | 56.0 |
 | Human performance | 86.0 |
 
