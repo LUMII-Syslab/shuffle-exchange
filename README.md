@@ -35,8 +35,8 @@ Here are the accuracy results on the _[LAMBADA](https://www.aclweb.org/anthology
 Note: Our used model is 7 times smaller and can process 32 times longer sequences using the same amount of GPU memory compared to the _Universal Transformer_ model.
 
 - Our model with depth of 2log*n* can learn sorting and long binary addition algorithms that generalize to longer inputs. Here are the accuracy results on the chosen sequential algorithmic tasks – generalization to sequences of length 512 where the model is trained on length 64:
-**![](assets/readme-shuffle_exchange_algorithmic_accuracy.png)**
-- The algorithms that are learned by our model can process 128 times longer sequences and faster than the  _[DNGPU model](https://arxiv.org/pdf/1702.08727)_ (optimized Neural GPU with diagonal gates).
+**![](assets/readme-shuffle_exchange_task_accuracy.png)**
+- The algorithms that are learned by our model can process 128 times longer sequences and faster than the _[DNGPU model](https://arxiv.org/pdf/1702.08727)_ (optimized Neural GPU with diagonal gates).
 - On long binary multiplication task, our model achieves 98% test accuracy on sequences of length 128. Training multiplication on longer sequences is possible but requires increasing the width or depth of the model.
   - Note: The fastest practical FFT-based algorithms are O(*n*log*n*loglog*n*) therefore it is expected that the solution does not generalize to inputs longer than the model is trained on.
 
