@@ -50,7 +50,7 @@ Here is an illustration of a _Switch Unit_, it is similar to the _[Gated Recurre
 
 **![](assets/readme-shuffle_exchange_switch_operations.png)**
 
-The _Shuffle Layer_ follows (depicted as stylized arrows in the figure below), where inputs are permuted according to a cyclic bit shift – rotating left in the first part of the network and rotating right (inversely) in the second part.
+The _Shuffle Layer_ follows where inputs are permuted according to a cyclic bit shift – rotating left in the first part of the network and rotating right (inversely) in the second part.
 
 The _Shuffle-Exchange neural network_ is organized in blocks by alternating these two kinds of layers in the pattern of the _Beneš network_. Such a network can represent a wide class of functions including any permutation of the input values. 
  
