@@ -148,11 +148,15 @@ emb_word_dictionary = base_folder + "word_dict.bin"
 
 If you use _Shuffle-Exchange neural networks_, please use the following _BibTeX_ entry:
 ```
-@incollection{
-  title = {Neural Shuffle-Exchange Networks - Sequence Processing in O(n log n) Time},
-  author = {Freivalds, Kārlis and Ozoliņš, Emīls and Šostaks, Agris},
-  booktitle = {Advances in Neural Information Processing Systems 33},
-  year = {2019}
+@incollection{NIPS2019_8889,
+title = {Neural Shuffle-Exchange Networks - Sequence Processing in O(n log n) Time},
+author = {Freivalds, Karlis and Ozoli\c{n}\v{s}, Em\={\i}ls and \v{S}ostaks, Agris},
+booktitle = {Advances in Neural Information Processing Systems 32},
+editor = {H. Wallach and H. Larochelle and A. Beygelzimer and F. d\textquotesingle Alch\'{e}-Buc and E. Fox and R. Garnett},
+pages = {6626--6637},
+year = {2019},
+publisher = {Curran Associates, Inc.},
+url = {http://papers.nips.cc/paper/8889-neural-shuffle-exchange-networks-sequence-processing-in-on-log-n-time.pdf}
 }
 ```
 
