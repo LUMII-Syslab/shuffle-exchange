@@ -6,7 +6,7 @@ This repository contains the official _TensorFlow_ implementation of the followi
 >
 > by Kārlis Freivalds, Emīls Ozoliņš, Agris Šostaks
 >
-> [[arXiv](https://arxiv.org/abs/1907.07897)] [[BibTeX](#citing-shuffle-exchange-neural-networks)]
+> [[NeurIPS](http://papers.neurips.cc/paper/8889-neural-shuffle-exchange-networks-sequence-processing-in-on-log-n-time)] [[arXiv](https://arxiv.org/abs/1907.07897)] [[BibTeX](#citing-shuffle-exchange-neural-networks)]
 >
 >Abstract: _A key requirement in sequence to sequence processing is the modeling of long range dependencies. To this end, a vast majority of the state-of-the-art models use attention mechanism which is of O(n²) complexity that leads to slow execution for long sequences._
 >
