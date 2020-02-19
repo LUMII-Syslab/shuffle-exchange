@@ -16,7 +16,7 @@ This repository contains the official _TensorFlow_ implementation of the followi
 
 # Introduction
 
-_Residual Shuffle-Exchange networks_ are a simpler and faster replacement for the recently proposed _Neural Shuffle-Exchange network_ architecture. It has O(*n* log *n*) complexity and enables processing of sequences up to a length of 2 million symbols where standard methods (e.g., attention mechanisms) fail. The _Residual Shuffle-Exchange_ can serve as a useful building block for long sequence processing applications.
+_Shuffle-Exchange neural network_ is a new differentiable architecture for sequence processing tasks that has O(log*n*) depth and O(*n* log *n*) total complexity and allows modeling any dependencies in the sequence. It can successfully learn nontrivial O(*n* log *n*) time algorithms with good generalization. The _Shuffle-Exchange model_ can serve as an alternative to the attention mechanism with better scaling to long sequences.
 
 # Preview of results
 
