@@ -2,6 +2,8 @@
 
 This repository contains the official _TensorFlow_ implementation of the following paper:
 
+**April 10, 2020 - Update** A simple and lightweight variant of the Shuffle-Exchange Network has been released. The new version not only scales to longer sequences but also converges faster and provides better accuracy. It is available on [arXiv](https://arxiv.org/abs/2004.04662) and [GitHub](https://github.com/LUMII-Syslab/RSE).
+
 >**Neural Shuffle-Exchange Networks − Sequence Processing in O(*n* log *n*) Time**
 >
 > by Kārlis Freivalds, Emīls Ozoliņš, Agris Šostaks
